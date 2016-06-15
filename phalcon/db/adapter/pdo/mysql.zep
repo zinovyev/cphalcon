@@ -119,161 +119,125 @@ class Mysql extends PdoAdapter implements AdapterInterface
 			 */
 			let columnType = field[1];
 
-			loop {
+			/**
+			 * Enum are treated as char
+			 */
+			if memstr(columnType, "enum") {
+				let definition["type"] = Column::TYPE_CHAR;
 
-				/**
-				 * Enum are treated as char
-				 */
-				if memstr(columnType, "enum") {
-					let definition["type"] = Column::TYPE_CHAR;
-					break;
-				}
+			/**
+			 * Smallint/Bigint/Integers/Int are int
+			 */
+			} elseif memstr(columnType, "bigint") {
+				let definition["type"] = Column::TYPE_BIGINTEGER,
+					definition["isNumeric"] = true,
+					definition["bindType"] = Column::BIND_PARAM_INT;
 
-				/**
-				 * Smallint/Bigint/Integers/Int are int
-				 */
-				if memstr(columnType, "bigint") {
-					let definition["type"] = Column::TYPE_BIGINTEGER,
-						definition["isNumeric"] = true,
-						definition["bindType"] = Column::BIND_PARAM_INT;
-					break;
-				}
+			/**
+			 * Smallint/Bigint/Integers/Int are int
+			 */
+			} elseif memstr(columnType, "int") {
+				let definition["type"] = Column::TYPE_INTEGER,
+					definition["isNumeric"] = true,
+					definition["bindType"] = Column::BIND_PARAM_INT;
 
-				/**
-				 * Smallint/Bigint/Integers/Int are int
-				 */
-				if memstr(columnType, "int") {
-					let definition["type"] = Column::TYPE_INTEGER,
-						definition["isNumeric"] = true,
-						definition["bindType"] = Column::BIND_PARAM_INT;
-					break;
-				}
-
-				/**
-				 * Varchar are varchars
-				 */
-				if memstr(columnType, "varchar") {
-					let definition["type"] = Column::TYPE_VARCHAR;
-					break;
-				}
-
-				/**
-				 * Special type for datetime
-				 */
-				if memstr(columnType, "datetime") {
-					let definition["type"] = Column::TYPE_DATETIME;
-					break;
-				}
-
-				/**
-				 * Chars are chars
-				 */
-				if memstr(columnType, "char") {
-					let definition["type"] = Column::TYPE_CHAR;
-					break;
-				}
-
-				/**
-				 * Date are dates
-				 */
-				if memstr(columnType, "date") {
-					let definition["type"] = Column::TYPE_DATE;
-					break;
-				}
-
-				/**
-				 * Timestamp are dates
-				 */
-				if memstr(columnType, "timestamp") {
-					let definition["type"] = Column::TYPE_TIMESTAMP;
-					break;
-				}
-
-				/**
-				 * Text are varchars
-				 */
-				if memstr(columnType, "text") {
-					let definition["type"] = Column::TYPE_TEXT;
-					break;
-				}
-
-				/**
-				 * Decimals are floats
-				 */
-				if memstr(columnType, "decimal"){
-					let definition["type"] = Column::TYPE_DECIMAL,
-						definition["isNumeric"] = true,
-						definition["bindType"] = Column::BIND_PARAM_DECIMAL;
-					break;
-				}
-
-				/**
-				 * Doubles
-				 */
-				if memstr(columnType, "double"){
-					let definition["type"] = Column::TYPE_DOUBLE,
-						definition["isNumeric"] = true,
-						definition["bindType"] = Column::BIND_PARAM_DECIMAL;
-					break;
-				}
-
-				/**
-				 * Float/Smallfloats/Decimals are float
-				 */
-				if memstr(columnType, "float") {
-					let definition["type"] = Column::TYPE_FLOAT,
-						definition["isNumeric"] = true,
-						definition["bindType"] = Column::BIND_PARAM_DECIMAL;
-					break;
-				}
-
-				/**
-				 * Boolean
-				 */
-				if memstr(columnType, "bit") {
-					let definition["type"] = Column::TYPE_BOOLEAN,
-						definition["bindType"] = Column::BIND_PARAM_BOOL;
-					break;
-				}
-
-				/**
-				 * Tinyblob
-				 */
-				if memstr(columnType, "tinyblob") {
-					let definition["type"] = Column::TYPE_TINYBLOB,
-						definition["bindType"] = Column::BIND_PARAM_BOOL;
-					break;
-				}
-
-				/**
-				 * Mediumblob
-				 */
-				if memstr(columnType, "mediumblob") {
-					let definition["type"] = Column::TYPE_MEDIUMBLOB;
-					break;
-				}
-
-				/**
-				 * Longblob
-				 */
-				if memstr(columnType, "longblob") {
-					let definition["type"] = Column::TYPE_LONGBLOB;
-					break;
-				}
-
-				/**
-				 * Blob
-				 */
-				if memstr(columnType, "blob") {
-					let definition["type"] = Column::TYPE_BLOB;
-					break;
-				}
-
-				/**
-				 * By default is string
-				 */
+			/**
+			 * Varchar are varchars
+			 */
+			} elseif memstr(columnType, "varchar") {
 				let definition["type"] = Column::TYPE_VARCHAR;
-				break;
+
+			/**
+			 * Special type for datetime
+			 */
+			} elseif memstr(columnType, "datetime") {
+				let definition["type"] = Column::TYPE_DATETIME;
+
+			/**
+			 * Chars are chars
+			 */
+			} elseif memstr(columnType, "char") {
+				let definition["type"] = Column::TYPE_CHAR;
+
+			/**
+			 * Date are dates
+			 */
+			} elseif memstr(columnType, "date") {
+				let definition["type"] = Column::TYPE_DATE;
+
+			/**
+			 * Timestamp are dates
+			 */
+			} elseif memstr(columnType, "timestamp") {
+				let definition["type"] = Column::TYPE_TIMESTAMP;
+
+			/**
+			 * Text are varchars
+			 */
+			} elseif memstr(columnType, "text") {
+				let definition["type"] = Column::TYPE_TEXT;
+
+			/**
+			 * Decimals are floats
+			 */
+			} elseif memstr(columnType, "decimal"){
+				let definition["type"] = Column::TYPE_DECIMAL,
+					definition["isNumeric"] = true,
+					definition["bindType"] = Column::BIND_PARAM_DECIMAL;
+
+			/**
+			 * Doubles
+			 */
+			} elseif memstr(columnType, "double"){
+				let definition["type"] = Column::TYPE_DOUBLE,
+					definition["isNumeric"] = true,
+					definition["bindType"] = Column::BIND_PARAM_DECIMAL;
+
+			/**
+			 * Float/Smallfloats/Decimals are float
+			 */
+			} elseif memstr(columnType, "float") {
+				let definition["type"] = Column::TYPE_FLOAT,
+					definition["isNumeric"] = true,
+					definition["bindType"] = Column::BIND_PARAM_DECIMAL;
+
+			/**
+			 * Boolean
+			 */
+			} elseif memstr(columnType, "bit") {
+				let definition["type"] = Column::TYPE_BOOLEAN,
+					definition["bindType"] = Column::BIND_PARAM_BOOL;
+
+			/**
+			 * Tinyblob
+			 */
+			} elseif memstr(columnType, "tinyblob") {
+				let definition["type"] = Column::TYPE_TINYBLOB,
+					definition["bindType"] = Column::BIND_PARAM_BOOL;
+
+			/**
+			 * Mediumblob
+			 */
+			} elseif memstr(columnType, "mediumblob") {
+				let definition["type"] = Column::TYPE_MEDIUMBLOB;
+
+			/**
+			 * Longblob
+			 */
+			} elseif memstr(columnType, "longblob") {
+				let definition["type"] = Column::TYPE_LONGBLOB;
+
+			/**
+			 * Blob
+			 */
+			} elseif memstr(columnType, "blob") {
+				let definition["type"] = Column::TYPE_BLOB;
+
+			/**
+			 * By default is string
+			 */
+			} else {
+				let definition["type"] = Column::TYPE_VARCHAR;
 			}
 
 			/**
